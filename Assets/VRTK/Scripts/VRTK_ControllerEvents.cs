@@ -65,20 +65,28 @@ namespace VRTK
             Undefined
         }
 
+        [HideInInspector]
         [Tooltip("The button to use for the action of turning a laser pointer on / off.")]
         public ButtonAlias pointerToggleButton = ButtonAlias.Touchpad_Press;
+        [HideInInspector]
         [Tooltip("The button to use for the action of setting a destination marker from the cursor position of the pointer.")]
         public ButtonAlias pointerSetButton = ButtonAlias.Touchpad_Press;
+        [HideInInspector]
         [Tooltip("The button to use for the action of grabbing game objects.")]
         public ButtonAlias grabToggleButton = ButtonAlias.Grip;
+        [HideInInspector]
         [Tooltip("The button to use for the action of using game objects.")]
         public ButtonAlias useToggleButton = ButtonAlias.Trigger_Click;
+        [HideInInspector]
         [Tooltip("The button to use for the action of clicking a UI element.")]
         public ButtonAlias uiClickButton = ButtonAlias.Trigger_Click;
+        [HideInInspector]
         [Tooltip("The button to use for the action of bringing up an in-game menu.")]
         public ButtonAlias menuToggleButton = ButtonAlias.Application_Menu;
+        [HideInInspector]
         [Tooltip("The amount of fidelity in the changes on the axis, which is defaulted to 1. Any number higher than 2 will probably give too sensitive results.")]
         public int axisFidelity = 1;
+        [HideInInspector]
         [Tooltip("The level on the trigger axis to reach before a click is registered.")]
         public float triggerClickThreshold = 1f;
 
@@ -873,7 +881,7 @@ namespace VRTK
             }
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             CacheControllerIndex();
             //Only continue if the controller index has been set to a sensible number
