@@ -1,3 +1,4 @@
+#if (UNITY_5_4_OR_NEWER)
 namespace VRTK
 {
     using System;
@@ -99,14 +100,14 @@ namespace VRTK
                 }
 
                 adaptiveQuality.overrideRenderScale = EditorGUILayout.Toggle(
-                  CreateLabelWithTooltip(adaptiveQuality, "overrideRenderScale"),
+                  VRTK_EditorUtilities.BuildGUIContent<VRTK_AdaptiveQuality>("overrideRenderScale"),
                   adaptiveQuality.overrideRenderScale);
 
                 EditorGUI.BeginDisabledGroup(!adaptiveQuality.overrideRenderScale);
                 {
                     adaptiveQuality.overrideRenderScaleLevel =
                       EditorGUILayout.IntSlider(
-                        CreateLabelWithTooltip(adaptiveQuality, "overrideRenderScaleLevel"),
+                        VRTK_EditorUtilities.BuildGUIContent<VRTK_AdaptiveQuality>("overrideRenderScaleLevel"),
                         adaptiveQuality.overrideRenderScaleLevel,
                         0,
                         maxRenderScaleLevel);
@@ -126,13 +127,6 @@ namespace VRTK
             EditorGUILayout.Space();
             EditorGUILayout.LabelField(headerAttribute.header, EditorStyles.boldLabel);
         }
-
-        private static GUIContent CreateLabelWithTooltip(VRTK_AdaptiveQuality adaptiveQuality, string fieldName)
-        {
-            var fieldInfo = adaptiveQuality.GetType().GetField(fieldName);
-            var tooltipAttribute = (TooltipAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(TooltipAttribute));
-
-            return new GUIContent(ObjectNames.NicifyVariableName(fieldName), tooltipAttribute.tooltip);
-        }
     }
 }
+#endif

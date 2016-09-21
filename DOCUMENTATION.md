@@ -1842,7 +1842,7 @@ The highlighting of an Interactable Object is defaulted to use the `VRTK_Materia
  * **Allowed Touch Controllers:** Determines which controller can initiate a touch action.
  * **Hide Controller On Touch:** Optionally override the controller setting.
  * **Is Grabbable:** Determines if the object can be grabbed.
- * **Is Droppable:** Determines if the object can be dropped by the controller grab button being used. If this is unchecked then it's not possible to drop the item once it's picked up using the controller button. It is still possible for the item to be dropped if the Grab Attach Mechanic is a joint and too much force is applied to the object and the joint is broken. To prevent this it's better to use the Child Of Controller mechanic.
+ * **Is Droppable:** Determines if the object can be dropped by the controller grab button being used. If this is unchecked then it's not possible to drop the item once it's picked up using the controller button.
  * **Is Swappable:** Determines if the object can be swapped between controllers when it is picked up. If it is unchecked then the object must be dropped before it can be picked up by the other controller.
  * **Hold Button To Grab:** If this is checked then the grab button on the controller needs to be continually held down to keep grabbing. If this is unchecked the grab button toggles the grab action with one button press to grab and another to release.
  * **Grab Override Button:** If this is set to `Undefined` then the global grab alias button will grab the object, setting it to any other button will ensure the override button is used to grab this specific interactable object.
@@ -1860,7 +1860,7 @@ The highlighting of an Interactable Object is defaulted to use the `VRTK_Materia
  * **Throw Multiplier:** An amount to multiply the velocity of the given object when it is thrown. This can also be used in conjunction with the Interact Grab Throw Multiplier to have certain objects be thrown even further than normal (or thrown a shorter distance if a number below 1 is entered).
  * **On Grab Collision Delay:** The amount of time to delay collisions affecting the object when it is first grabbed. This is useful if a game object may get stuck inside another object when it is being grabbed.
  * **Is Usable:** Determines if the object can be used.
- * **Use Only If Grabbed:** If this is checked the object can be used only if it was grabbed before.
+ * **Use Only If Grabbed:** If this is checked the object can be used only if it is currently being grabbed.
  * **Hold Button To Use:** If this is checked then the use button on the controller needs to be continually held down to keep using. If this is unchecked the the use button toggles the use action with one button press to start using and another to stop using.
  * **Use Override Button:** If this is set to `Undefined` then the global use alias button will use the object, setting it to any other button will ensure the override button is used to use this specific interactable object.
  * **Pointer Activates Use Action:** If this is checked then when a World Pointer beam (projected from the controller) hits the interactable object, if the object has `Hold Button To Use` unchecked then whilst the pointer is over the object it will run it's `Using` method. If `Hold Button To Use` is unchecked then the `Using` method will be run when the pointer is deactivated. The world pointer will not throw the `Destination Set` event if it is affecting an interactable object with this setting checked as this prevents unwanted teleporting from happening when using an object with a pointer.
@@ -2655,6 +2655,8 @@ The Simulator script is attached to the `[CameraRig]` prefab. Supported movement
 
 Adaptive Quality dynamically changes rendering settings to maintain VR framerate while maximizing GPU utilization.
 
+> **Only Compatible With Unity 5.4 and above**
+
 The Adaptive Quality script is attached to the `eye` object within the `[CameraRig]` prefab.
 
 There are two goals:
@@ -2772,7 +2774,9 @@ All 3D controls extend the `VRTK_Control` abstract class which provides common m
  * [Drawer](#drawer-vrtk_drawer)
  * [Knob](#knob-vrtk_knob)
  * [Lever](#lever-vrtk_lever)
+ * [Spring Lever](#spring-lever-vrtk_spring_lever)
  * [Slider](#slider-vrtk_slider)
+ * [Content Handler](#content-handler-vrtk_contenthandler)
 
 ---
 
@@ -2992,6 +2996,21 @@ The script will instantiate the required Rigidbody, Interactable and HingeJoint 
 
 ---
 
+## Spring Lever (VRTK_Spring_Lever)
+ > extends [VRTK_Lever](#lever-vrtk_lever)
+
+### Overview
+
+This script extends VRTK_Lever to add spring force toward whichever end of the lever's range it is closest to.
+
+The script will instantiate the required Rigidbody, Interactable and HingeJoint components automatically in case they do not exist yet. The joint is very tricky to setup automatically though and will only work in straight forward cases. If there are any issues, then create the HingeJoint component manually and configure it as needed.
+
+### Inspector Parameters
+
+ * **Spring Strength:** Strength of the spring force that will be applied toward either end of the lever's range.
+
+---
+
 ## Slider (VRTK_Slider)
  > extends [VRTK_Control](#control-vrtk_control)
 
@@ -3014,6 +3033,26 @@ The script will instantiate the required Rigidbody and Interactable components a
 ### Example
 
 `VRTK/Examples/025_Controls_Overview` has a selection of sliders at various angles with different step values to demonstrate their usage.
+
+---
+
+## Content Handler (VRTK_ContentHandler)
+
+### Overview
+
+Manages objects defined as content. When taking out an object from a drawer and closing the drawer this object would otherwise disappear even if outside the drawer.
+
+The script will use the boundaries of the control to determine if it is in or out and re-parent the object as necessary. It can be put onto individual objects or the parent of multiple objects. Using the latter way all interactable objects under that parent will become managed by the script.
+
+### Inspector Parameters
+
+ * **Control:** The 3D control responsible for the content.
+ * **Inside:** The transform containing the meshes or colliders that define the inside of the control.
+ * **Outside:** Any transform that will act as the parent while the object is not inside the control.
+
+### Example
+
+`VRTK/Examples/025_Controls_Overview` has a drawer with a collection of items that adhere to this concept.
 
 ---
 
