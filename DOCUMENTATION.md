@@ -20,6 +20,8 @@ A collection of pre-defined usable prefabs have been included to allow for each 
  * [Radial Menu](#radial-menu-radialmenu)
  * [Independent Radial Menu Controller](#independent-radial-menu-controller-vrtk_independentradialmenucontroller)
  * [Console Viewer Canvas](#console-viewer-canvas-vrtk_consoleviewer)
+ * [Panel Menu Controller](#panel-menu-controller-panelmenucontroller)
+ * [Panel Menu Item Controller](#panel-menu-item-controller-panelmenuitemcontroller)
 
 ---
 
@@ -235,6 +237,63 @@ The ClearLog method clears the current log view of all messages
 
 ---
 
+## Panel Menu Controller (PanelMenuController)
+
+### Overview
+
+Purpose: top-level controller class to handle the display of up to four child PanelMenuItemController items which are displayed as a canvas UI panel.
+
+This script should be attached to a VRTK_InteractableObject > first child GameObject [PanelMenuController].
+The [PanelMenuController] must have a child GameObject [panel items container].
+The [panel items container] must have a Canvas component.
+A [panel items container] can have up to four child GameObject, each of these contains the UI for a panel that can be displayed by [PanelMenuController].
+They also have the [PanelMenuItemController] script attached to them. The [PanelMenuItemController] script intercepts the controller events sent from this [PanelMenuController] and passes them onto additional custom event subscriber scripts, which then carry out the required custom UI actions.
+To show / hide a UI panel, you must first pick up the VRTK_InteractableObject and then by pressing the touchpad top/bottom/left/right you can open/close the child UI panel that has been assigned via the Unity Editor panel. Button type UI actions are handled by a trigger press when the panel is open.
+
+### Inspector Parameters
+
+ * **Rotate Towards:** The GameObject the panel should rotate towards, which is the Camera (eye) by default.
+ * **Zoom Scale Multiplier:** The scale multiplier, which relates to the scale of parent interactable object.
+ * **Top Panel Menu Item Controller:** The top PanelMenuItemController, which is triggered by pressing up on the controller touchpad.
+ * **Bottom Panel Menu Item Controller:** The bottom PanelMenuItemController, which is triggered by pressing down on the controller touchpad.
+ * **Left Panel Menu Item Controller:** The left PanelMenuItemController, which is triggered by pressing left on the controller touchpad.
+ * **Right Panel Menu Item Controller:** The right PanelMenuItemController, which is triggered by pressing right on the controller touchpad.
+
+### Example
+
+`040_Controls_Panel_Menu` contains three basic interactive object examples of the PanelMenu in use.
+
+---
+
+## Panel Menu Item Controller (PanelMenuItemController)
+
+### Overview
+
+Purpose: panel item controller class that intercepts the controller events sent from a [PanelMenuController] and passes them onto additional custom event subscriber scripts, which then carry out the required custom UI actions.
+
+This script should be attached to a VRTK_InteractableObject > [PanelMenuController] > [panel items container] > child GameObject (See the [PanelMenuController] class for more details on setup structure.).
+To show / hide a UI panel, you must first pick up the VRTK_InteractableObject and then by pressing the touchpad top/bottom/left/right you can open/close the child UI panel that has been assigned via the Unity Editor panel.
+
+### Class Events
+
+ * `PanelMenuItemShowing` - Emitted when the panel menu item is showing.
+ * `PanelMenuItemHiding` - Emitted when the panel menu item is hiding.
+ * `PanelMenuItemSwipeLeft` - Emitted when the panel menu item is open and the user swipes left on the controller touchpad.
+ * `PanelMenuItemSwipeRight` - Emitted when the panel menu item is open and the user swipes right on the controller touchpad.
+ * `PanelMenuItemSwipeTop` - Emitted when the panel menu item is open and the user swipes top on the controller touchpad.
+ * `PanelMenuItemSwipeBottom` - Emitted when the panel menu item is open and the user swipes bottom on the controller touchpad.
+ * `PanelMenuItemTriggerPressed` - Emitted when the panel menu item is open and the user presses the trigger of the controller holding the interactable object.
+
+### Event Payload
+
+ * `GameObject interactableObject` - The GameObject for the interactable object the PanelMenu is attached to.
+
+### Example
+
+`040_Controls_Panel_Menu` contains three basic interactive object examples of the PanelMenu in use.
+
+---
+
 # Abstract Classes (VRTK/Scripts/Abstractions)
 
 To allow for re-usability and object consistency, a collection of abstract classes are provided which can be used to extend into a concrete class providing consistent functionality across many different scripts without needing to duplicate code.
@@ -418,6 +477,17 @@ As this is an abstract class, it cannot be applied directly to a game object and
 
 The Initalise method is used to set up the state of the highlighter.
 
+#### Reset/0
+
+  > `public abstract void Reset();`
+
+  * Parameters
+   * _none_
+  * Returns
+   * _none_
+
+The Reset method is used to reset the highlighter if anything on the object has changed. It should be called by any scripts changing object materials or colours.
+
 #### Highlight/2
 
   > `public abstract void Highlight(Color? color = null, float duration = 0f);`
@@ -490,6 +560,17 @@ This is the default highlighter that is applied to any script that requires a hi
 
 The Initialise method sets up the highlighter for use.
 
+#### Reset/0
+
+  > `public override void Reset()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * _none_
+
+The Reset method stores the object's materials and shared materials prior to highlighting.
+
 #### Highlight/2
 
   > `public override void Highlight(Color? color, float duration = 0f)`
@@ -551,6 +632,17 @@ The Outline Object Copy Highlighter works by making a copy of a mesh and adding 
    * _none_
 
 The Initialise method sets up the highlighter for use.
+
+#### Reset/0
+
+  > `public override void Reset()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * _none_
+
+The Reset method creates the additional model to use as the outline highlighted object.
 
 #### Highlight/2
 
@@ -852,7 +944,7 @@ The highlighting of the controller is defaulted to use the `VRTK_MaterialColorSw
 
 ### Inspector Parameters
 
- * **Model Element Paths:** A collection of strings that determine the path to the controller model sub elements for identifying the model parts at runtime. The paths will default to the model element paths of the selected SDK Bridge.
+ * **Model Element Paths:** A collection of strings that determine the path to the controller model sub elements for identifying the model parts at runtime. If the paths are left empty they will default to the model element paths of the selected SDK Bridge.
   * The available model sub elements are:
     * `Body Model Path`: The overall shape of the controller.
     * `Trigger Model Path`: The model that represents the trigger button.
@@ -1276,6 +1368,8 @@ The Simple Pointer script can be attached to a Controller object within the `[Ca
  * **Pointer Length:** The distance the beam will project before stopping.
  * **Show Pointer Tip:** Toggle whether the cursor is shown on the end of the pointer beam.
  * **Custom Pointer Cursor:** A custom Game Object can be applied here to use instead of the default sphere for the pointer cursor.
+ * **Pointer Cursor Match Target Normal:** Rotate the pointer cursor to match the normal of the target surface (or the pointer direction if no target was hit).
+ * **Pointer Cursor Rescaled Along Distance:** Rescale the pointer cursor proportionally to the distance from this game object (useful when used as a gaze pointer).
 
 ### Example
 
@@ -1328,6 +1422,7 @@ The Play Area Cursor is used in conjunction with a World Pointer script and disp
 
  * **Play Area Cursor Dimensions:** Determines the size of the play area cursor and collider. If the values are left as zero then the Play Area Cursor will be sized to the calibrated Play Area space.
  * **Handle Play Area Cursor Collisions:** If this is ticked then if the play area cursor is colliding with any other object then the pointer colour will change to the `Pointer Miss Color` and the `WorldPointerDestinationSet` event will not be triggered, which will prevent teleporting into areas where the play area will collide.
+ * **Headset Out Of Bounds Is Collision:** If this is ticked then if the user's headset is outside of the play area cursor bounds then it is considered a collision even if the play area isn't colliding with anything.
  * **Ignore Target With Tag Or Class:** A string that specifies an object Tag or the name of a Script attached to an object and notifies the play area cursor to ignore collisions with the object.
  * **Target Tag Or Script List Policy:** A specified VRTK_TagOrScriptPolicyList to use to determine whether the play area cursor collisions will be acted upon. If a list is provided then the 'Ignore Target With Tag Or Class' parameter will be ignored.
 
@@ -3074,6 +3169,7 @@ The script will instantiate the required Rigidbody, Interactable and HingeJoint 
 
 ### Inspector Parameters
 
+ * **Connected To:** An optional game object to which the lever will be connected. If the game object moves the lever will follow along.
  * **Direction:** The axis on which the lever should rotate. All other axis will be frozen.
  * **Min Angle:** The minimum angle of the lever counted from its initial position.
  * **Max Angle:** The maximum angle of the lever counted from its initial position.
