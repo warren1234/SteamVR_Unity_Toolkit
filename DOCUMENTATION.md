@@ -17,6 +17,7 @@ A collection of pre-defined usable prefabs have been included to allow for each 
  * [Frames Per Second Canvas](#frames-per-second-canvas-vrtk_framespersecondviewer)
  * [Object Tooltip](#object-tooltip-vrtk_objecttooltip)
  * [Controller Tooltips](#controller-tooltips-vrtk_controllertooltips)
+ * [Controller Rigidbody Activator](#controller-rigidbody-activator-vrtk_controllerrigidbodyactivator)
  * [Radial Menu](#radial-menu-radialmenu)
  * [Independent Radial Menu Controller](#independent-radial-menu-controller-vrtk_independentradialmenucontroller)
  * [Console Viewer Canvas](#console-viewer-canvas-vrtk_consoleviewer)
@@ -74,16 +75,27 @@ There are a number of parameters that can be set on the Prefab which are provide
 
 ### Class Methods
 
-#### Reset/0
+#### ResetTooltip/0
 
-  > `public void Reset()`
+  > `public void ResetTooltip()`
 
   * Parameters
    * _none_
   * Returns
    * _none_
 
-The Reset method resets the tooltip back to its initial state
+The ResetTooltip method resets the tooltip back to its initial state.
+
+#### UpdateText/1
+
+  > `public void UpdateText(string newText)`
+
+  * Parameters
+   * `string newText` - A string containing the text to update the tooltip to display.
+  * Returns
+   * _none_
+
+The UpdateText method allows the tooltip text to be updated at runtime.
 
 ### Example
 
@@ -117,6 +129,29 @@ There are a number of parameters that can be set on the Prefab which are provide
 
 ### Class Methods
 
+#### ResetTooltip/0
+
+  > `public void ResetTooltip()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * _none_
+
+The Reset method reinitalises the tooltips on all of the controller elements.
+
+#### UpdateText/2
+
+  > `public void UpdateText(TooltipButtons element, string newText)`
+
+  * Parameters
+   * `TooltipButtons element` - The specific controller element to change the tooltip text on.
+   * `string newText` - A string containing the text to update the tooltip to display.
+  * Returns
+   * _none_
+
+The UpdateText method allows the tooltip text on a specific controller element to be updated at runtime.
+
 #### ToggleTips/2
 
   > `public void ToggleTips(bool state, TooltipButtons element = TooltipButtons.None)`
@@ -132,6 +167,22 @@ The ToggleTips method will display the controller tooltips if the state is `true
 ### Example
 
 `VRTK/Examples/029_Controller_Tooltips` displays two cubes that have an object tooltip added to them along with tooltips that have been added to the controllers.
+
+---
+
+## Controller Rigidbody Activator (VRTK_ControllerRigidbodyActivator)
+
+### Overview
+
+This adds a simple trigger collider volume that when a controller enters will enable the rigidbody on the controller.
+
+The prefab game object should be placed in the scene where another interactable game object (such as a button control) is located to turn the controller rigidbody on at the appropriate time for interaction with the control without needing to manually activate by pressing the grab.
+
+If the prefab is placed as a child of the target interactable game object then the collider volume on the prefab will trigger collisions on the interactable object.
+
+The sphere collider on the prefab can have the radius adjusted to determine how close the controller needs to be to the object before the rigidbody is activated.
+
+It's also possible to replace the sphere trigger collider with an alternative trigger collider for customised collision detection.
 
 ---
 
@@ -477,16 +528,16 @@ As this is an abstract class, it cannot be applied directly to a game object and
 
 The Initalise method is used to set up the state of the highlighter.
 
-#### Reset/0
+#### ResetHighlighter/0
 
-  > `public abstract void Reset();`
+  > `public abstract void ResetHighlighter();`
 
   * Parameters
    * _none_
   * Returns
    * _none_
 
-The Reset method is used to reset the highlighter if anything on the object has changed. It should be called by any scripts changing object materials or colours.
+The ResetHighlighter method is used to reset the highlighter if anything on the object has changed. It should be called by any scripts changing object materials or colours.
 
 #### Highlight/2
 
@@ -526,6 +577,17 @@ The Unhighlight method is used to initiate the logic that returns an object back
 
 The GetOption method is used to return a value from the options array if the given key exists.
 
+#### UsesClonedObject/0
+
+  > `public virtual bool UsesClonedObject()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * `bool` - Returns true if the highlighter creates a cloned object to apply the highlighter on, returns false if no additional object is created.
+
+The UsesClonedObject method is used to return whether the current highlighter creates a cloned object to do the highlighting with.
+
 ---
 
 ## Material Colour Swap (VRTK_MaterialColorSwapHighlighter)
@@ -544,6 +606,7 @@ This is the default highlighter that is applied to any script that requires a hi
 ### Inspector Parameters
 
  * **Emission Darken:** The emission colour of the texture will be the highlight colour but this percent darker.
+ * **Custom Material:** A custom material to use on the highlighted object.
 
 ### Class Methods
 
@@ -560,16 +623,16 @@ This is the default highlighter that is applied to any script that requires a hi
 
 The Initialise method sets up the highlighter for use.
 
-#### Reset/0
+#### ResetHighlighter/0
 
-  > `public override void Reset()`
+  > `public override void ResetHighlighter()`
 
   * Parameters
    * _none_
   * Returns
    * _none_
 
-The Reset method stores the object's materials and shared materials prior to highlighting.
+The ResetHighlighter method stores the object's materials and shared materials prior to highlighting.
 
 #### Highlight/2
 
@@ -633,16 +696,16 @@ The Outline Object Copy Highlighter works by making a copy of a mesh and adding 
 
 The Initialise method sets up the highlighter for use.
 
-#### Reset/0
+#### ResetHighlighter/0
 
-  > `public override void Reset()`
+  > `public override void ResetHighlighter()`
 
   * Parameters
    * _none_
   * Returns
    * _none_
 
-The Reset method creates the additional model to use as the outline highlighted object.
+The ResetHighlighter method creates the additional model to use as the outline highlighted object.
 
 #### Highlight/2
 
@@ -692,9 +755,11 @@ This directory contains all of the toolkit scripts that add VR functionality to 
  * [Headset Collision](#headset-collision-vrtk_headsetcollision)
  * [Headset Fade](#headset-fade-vrtk_headsetfade)
  * [Headset Collision Fade](#headset-collision-fade-vrtk_headsetcollisionfade)
+ * [Headset Controller Aware](#headset-controller-aware-vrtk_headsetcontrolleraware)
  * [Teleport Disable On Headset Collision](#teleport-disable-on-headset-collision-vrtk_teleportdisableonheadsetcollision)
+ * [Teleport Disable On Controller Obscured](#teleport-disable-on-controller-obscured-vrtk_teleportdisableoncontrollerobscured)
  * [Player Presence](#player-presence-vrtk_playerpresence)
- * [Hip Tracking](#hip-tracking-vrtk_hip_tracking)
+ * [Hip Tracking](#hip-tracking-vrtk_hiptracking)
  * [Touchpad Walking](#touchpad-walking-vrtk_touchpadwalking)
  * [Room Extender](#room-extender-vrtk_roomextender)
  * [Interactable Object](#interactable-object-vrtk_interactableobject)
@@ -1699,14 +1764,17 @@ Like the basic teleporter the Height Adjust Teleport script is attached to the `
 
 The purpose of the Headset Collision is to detect when the user's VR headset collides with another game object.
 
-> **Unity Version Information**
-> * If using `Unity 5.3` or older then the Headset Collision script is attached to the `Camera(head)` object within the `[CameraRig]` prefab.
-> * If using `Unity 5.4` or newer then the Headset Collision script is attached to the `Camera(eye)` object within the `[CameraRig]->Camera(head)` prefab.
+The Headset Collision script is added to the `[CameraRig]` prefab. It will automatically create a script on the headset to deal with the collision events.
 
 ### Inspector Parameters
 
  * **Ignore Target With Tag Or Class:** A string that specifies an object Tag or the name of a Script attached to an object and will be ignored on headset collision.
  * **Target Tag Or Script List Policy:** A specified VRTK_TagOrScriptPolicyList to use to determine whether any objects will be acted upon by the Headset Collision. If a list is provided then the 'Ignore Target With Tag Or Class' parameter will be ignored.
+
+### Class Variables
+
+ * `public bool headsetColliding` - Determines if the headset is currently colliding with another object. Default: `false`
+ * `public Collider collidingWith` - Stores the collider of what the headset is colliding with. Default: `null`
 
 ### Class Events
 
@@ -1750,9 +1818,7 @@ The IsColliding method is used to determine if the headset is currently collidin
 
 The purpose of the Headset Fade is to change the colour of the headset view to a specified colour over a given duration and to also unfade it back to being transparent. The `Fade` and `Unfade` methods can only be called via another script and this Headset Fade script does not do anything on initialisation to fade or unfade the headset view.
 
-> **Unity Version Information**
-> * If using `Unity 5.3` or older then the Headset Fade script is attached to the `Camera(head)` object within the `[CameraRig]` prefab.
-> * If using `Unity 5.4` or newer then the Headset Fade script is attached to the `Camera(eye)` object within the `[CameraRig]->Camera(head)` prefab.
+The Headset Fade script is added to the `[CameraRig]` prefab.
 
 ### Class Events
 
@@ -1836,20 +1902,103 @@ The purpose of the Headset Collision Fade is to detect when the user's VR headse
 
 The Headset Collision Fade uses a composition of the Headset Collision and Headset Fade scripts to derive the desired behaviour.
 
-> **Unity Version Information**
-> * If using `Unity 5.3` or older then the Headset Collision Fade script is attached to the `Camera(head)` object within the `[CameraRig]` prefab.
-> * If using `Unity 5.4` or newer then the Headset Collision Fade script is attached to the `Camera(eye)` object within the `[CameraRig]->Camera(head)` prefab.
+The Headset Collision Fade script is added to the `[CameraRig]` prefab.
 
 ### Inspector Parameters
 
  * **Blink Transition Speed:** The fade blink speed on collision.
  * **Fade Color:** The colour to fade the headset to on collision.
- * **Ignore Target With Tag Or Class:** A string that specifies an object Tag or the name of a Script attached to an object and will prevent the object from fading the headset view on collision.
- * **Target Tag Or Script List Policy:** A specified VRTK_TagOrScriptPolicyList to use to determine whether any objects will be acted upon by the Headset Collision Fade. If a list is provided then the 'Ignore Target With Tag Or Class' parameter will be ignored.
 
 ### Example
 
 `VRTK/Examples/011_Camera_HeadSetCollisionFading` has collidable walls around the play area and if the user puts their head into any of the walls then the headset will fade to black.
+
+---
+
+## Headset Controller Aware (VRTK_HeadsetControllerAware)
+
+### Overview
+
+The purpose of Headset Controller Aware is to allow the headset to know if something is blocking the path between the headset and controllers and to know if the headset is looking at a controller.
+
+### Inspector Parameters
+
+ * **Track Left Controller:** If this is checked then the left controller will be checked if items obscure it's path from the headset.
+ * **Track Right Controller:** If this is checked then the right controller will be checked if items obscure it's path from the headset.
+ * **Controller Glance Radius:** The radius of the accepted distance from the controller origin point to determine if the controller is being looked at.
+ * **Custom Right Controller Origin:** A custom transform to provide the world space position of the right controller.
+ * **Custom Left Controller Origin:** A custom transform to provide the world space position of the left controller.
+
+### Class Events
+
+ * `ControllerObscured` - Emitted when the controller is obscured by another object.
+ * `ControllerUnobscured` - Emitted when the controller is no longer obscured by an object.
+ * `ControllerGlanceEnter` - Emitted when the controller is seen by the headset view.
+ * `ControllerGlanceExit` - Emitted when the controller is no longer seen by the headset view.
+
+### Unity Events
+
+Adding the `VRTK_HeadsetControllerAware_UnityEvents` component to `VRTK_HeadsetControllerAware` object allows access to `UnityEvents` that will react identically to the Class Events.
+
+ * `OnControllerObscured` - Emits the ControllerObscured class event.
+ * `OnControllerUnobscured` - Emits the ControllerUnobscured class event.
+ * `OnControllerGlanceEnter` - Emits the ControllerGlanceEnter class event.
+ * `OnControllerGlanceExit` - Emits the ControllerGlanceExit class event.
+
+### Event Payload
+
+ * `RaycastHit raycastHit` - The Raycast Hit struct of item that is obscuring the path to the controller.
+ * `uint controllerIndex` - The index of the controller that is being or has been obscured or being or has been glanced.
+
+### Class Methods
+
+#### LeftControllerObscured/0
+
+  > `public bool LeftControllerObscured()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * `bool` - Returns true if the path between the headset and the controller is obscured.
+
+The LeftControllerObscured method returns the state of if the left controller is being obscured from the path of the headset.
+
+#### RightControllerObscured/0
+
+  > `public bool RightControllerObscured()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * `bool` - Returns true if the path between the headset and the controller is obscured.
+
+The RightControllerObscured method returns the state of if the right controller is being obscured from the path of the headset.
+
+#### LeftControllerGlanced/0
+
+  > `public bool LeftControllerGlanced()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * `bool` - Returns true if the headset can currently see the controller within the given radius threshold.
+
+the LeftControllerGlanced method returns the state of if the headset is currently looking at the left controller or not.
+
+#### RightControllerGlanced/0
+
+  > `public bool RightControllerGlanced()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * `bool` - Returns true if the headset can currently see the controller within the given radius threshold.
+
+the RightControllerGlanced method returns the state of if the headset is currently looking at the right controller or not.
+
+### Example
+
+`VRTK/Examples/029_Controller_Tooltips` displays tooltips that have been added to the controllers and are only visible when the controller is being looked at.
 
 ---
 
@@ -1858,6 +2007,14 @@ The Headset Collision Fade uses a composition of the Headset Collision and Heads
 ### Overview
 
 The purpose of the Teleport Disable On Headset Collision script is to detect when the headset is colliding with a valid object and prevent teleportation from working. This is to ensure that if a user is clipping their head into a wall then they cannot teleport to an area beyond the wall.
+
+---
+
+## Teleport Disable On Controller Obscured (VRTK_TeleportDisableOnControllerObscured)
+
+### Overview
+
+The purpose of the Teleport Disable On Controller Obscured script is to detect when the headset does not have a line of sight to the controllers and prevent teleportation from working. This is to ensure that if a user is clipping their controllers through a wall then they cannot teleport to an area beyond the wall.
 
 ---
 
@@ -1942,7 +2099,7 @@ The StopPhysicsFall method ends the physics based fall state, disables physics a
 
 ---
 
-## Hip Tracking (VRTK_Hip_Tracking)
+## Hip Tracking (VRTK_HipTracking)
 
 ### Overview
 
@@ -2459,12 +2616,13 @@ The GetTouchedObject method returns the current object being touched by the cont
 
 The IsObjectInteractable method is used to check if a given game object is of type `VRTK_InteractableObject` and whether the object is enabled.
 
-#### ToggleControllerRigidBody/1
+#### ToggleControllerRigidBody/2
 
-  > `public void ToggleControllerRigidBody(bool state)`
+  > `public void ToggleControllerRigidBody(bool state, bool forceToggle = false)`
 
   * Parameters
    * `bool state` - The state of whether the rigidbody is on or off. `true` toggles the rigidbody on and `false` turns it off.
+   * `bool forceToggle` - Determines if the rigidbody has been forced into it's new state by another script. This can be used to override other non-force settings. Defaults to `false`
   * Returns
    * _none_
 
@@ -2480,6 +2638,17 @@ The ToggleControllerRigidBody method toggles the controller's rigidbody's abilit
    * `bool` - Is true if the rigidbody on the controller is currently active and able to affect other scene rigidbodies.
 
 The IsRigidBodyActive method checks to see if the rigidbody on the controller object is active and can affect other rigidbodies in the scene.
+
+#### IsRigidBodyForcedActive/0
+
+  > `public bool IsRigidBodyForcedActive()`
+
+  * Parameters
+   * _none_
+  * Returns
+   * `bool` - Is true if the rigidbody is active and has been forced into the active state.
+
+The IsRigidBodyForcedActive method checks to see if the rigidbody on the controller object has been forced into the active state.
 
 #### ForceStopTouching/0
 
@@ -2841,7 +3010,7 @@ Adaptive Quality dynamically changes rendering settings to maintain VR framerate
 
 > **Only Compatible With Unity 5.4 and above**
 
-The Adaptive Quality script is attached to the `eye` object within the `[CameraRig]` prefab.
+The Adaptive Quality script is attached to the `[CameraRig]` game object.
 
 There are two goals:
  * Reduce the chances of dropping frames and reprojecting
@@ -2969,6 +3138,10 @@ All 3D controls extend the `VRTK_Control` abstract class which provides common m
 ### Overview
 
 All 3D controls extend the `VRTK_Control` abstract class which provides a default set of methods and events that all of the subsequent controls expose.
+
+### Inspector Parameters
+
+ * **Interact Without Grab:** If active the control will react to the controller without the need to push the grab button.
 
 ### Class Variables
 
