@@ -2,7 +2,7 @@
 > ### VRTK - Virtual Reality Toolkit
 > A collection of useful scripts and prefabs for building VR titles in Unity 5.
 
-[![Slack](https://vrtk-slack-invite.herokuapp.com/badge.svg)](http://invite.vrtk.io)
+[![Slack](http://sysdia2.co.uk/badge.svg)](http://invite.vrtk.io)
 [![Waffle](https://img.shields.io/badge/waffle-tracker-blue.svg?style=flat-square)](http://tracker.vrtk.io)
 
 **This Toolkit requires a compatible VR SDK to be imported into your Unity Project**
@@ -94,6 +94,7 @@ of the examples can be viewed within this repository in
 | Outrageous Grounds: The Maze | [Steam Store Page](http://store.steampowered.com/app/513050) |
 | Draco Dux | [Steam Store Page](http://store.steampowered.com/app/460730) |
 | Deisim | [Steam Store Page](http://store.steampowered.com/app/525680) |
+| Potioneer: The VR Gardening Simulator | [Steam Store Page](http://store.steampowered.com/app/544410) |
 
 ## Contributing
 
