@@ -364,7 +364,7 @@ namespace VRTK
             if (target)
             {
                 NavMeshHit hit;
-                validNavMeshLocation = NavMesh.SamplePosition(destinationPosition, out hit, 0.1f, NavMesh.AllAreas);
+                validNavMeshLocation = NavMesh.SamplePosition(destinationPosition, out hit, navMeshCheckDistance, NavMesh.AllAreas);
             }
             if (navMeshCheckDistance == 0f)
             {
@@ -409,9 +409,14 @@ namespace VRTK
 
         protected virtual float OverrideBeamLength(float currentLength)
         {
+            if(!controllerGrabScript || !controllerGrabScript.GetGrabbedObject())
+            {
+                savedBeamLength = 0f;
+            }
+
             if (interactWithObjects && grabToPointerTip && attachedToInteractorAttachPoint && controllerGrabScript && controllerGrabScript.GetGrabbedObject())
             {
-                savedBeamLength = (savedBeamLength == 0 ? currentLength : savedBeamLength);
+                savedBeamLength = (savedBeamLength == 0f ? currentLength : savedBeamLength);
                 return savedBeamLength;
             }
             return currentLength;
